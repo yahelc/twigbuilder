@@ -33,12 +33,20 @@ $(function() {
 		$variables = $("#variables");
 
 	$(document).bind("keyup keypress pageload click", function(e) {
+		if(window.lastRender && new Date() - window.lastRender  < 100){
+			return; 
+		}
+		else{
+		}
+		console.log(e);
+		window.lastRender = new Date();
+		
 		var variables = $("#variables").val() || "{}";
 		var template = $template.val();
 		if (!window.isFirst) {
 			window.isFirst = true;
-			if (variables === sessionStorage.variables && template === sessionStorage.template) {
-				return true;
+			if (template === sessionStorage.template) {
+			//	return true;
 			}
 		}
 		if (e.target.id == "variables") {
@@ -82,17 +90,11 @@ $(function() {
 		}).error(error);
 
 	});
-	if (template && variables) {
-		$template.val(template);
-		$variables.val(variables);
-	} else if (supportsSessionStorage) {
-		
+
 		myCodeMirror.getDoc().setValue(	sessionStorage.getItem("template") || "");
  		window.myCodeMirror && window.myCodeMirror.save();
+		$("#twig").keyup(); // trigger load
 		
-	}
-	$(document).trigger("pageload");
-	$("#twig").keyup();
-	
 
 });
+

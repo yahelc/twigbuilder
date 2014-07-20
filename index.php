@@ -3,19 +3,19 @@
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Twig Builder (BETA)</title>
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/css/bootstrap.min.css">
 
 	<!-- Optional theme -->
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/css/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="codemirror.css">
 	<link rel="stylesheet" href="eclipse.css">
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="/js/jquery-1.9.1.js"></script>
 	<!-- Latest compiled and minified JavaScript -->
-	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
 
 	<style>
+	
 	textarea { width: 100%; height: 500px;}
 	
 	body { background-opacity: 70%;}
@@ -53,7 +53,7 @@
 	</script>
 	
 </head>
-<body>
+<body class="">
 	
 	<div class="container">
 
@@ -213,9 +213,36 @@
 		  <div class="form-group">
 		    <label for="inputEmail3" class="col-sm-2 control-label">Fallback Value</label>
 		    <div class="col-sm-10">
-		      <input type="text" class="form-control" id="default" placeholder="Friend">
+		      <input type="text" class="form-control" id="default" placeholder="i.e. Friend">
 		    </div>
 		  </div>
+
+			<div class="radio conditional" id="conditional-group" style="display:none;">
+			  <label>
+			    <input type="radio" name="conditional-type" id="conditional-type-if" value="if" checked>
+			    If Statement
+			  </label>
+			  <label>
+			    <input type="radio" name="conditional-type" id="conditional-type-ifelse" value="ifelse">
+			    If/Else Statement
+			  </label>
+			</div>
+					<div class="radio conditional" id="conditional-type-group" style="display:none;">
+						<h3>Condition Type</h3>
+					  <label>
+					    <input type="radio" name="conditional-subtype" id="conditional-subtype-if-exists" value="ifexists" checked>
+					    If Exists
+					  </label>
+					  <label>
+					    <input type="radio" name="conditional-subtype" id="conditional-subtype-if-equals" value="ifequals">
+					    If Equals
+					  </label>
+					  <label>
+					    <input type="radio" name="conditional-subtype" id="conditional-subtype-if-not" value="ifnot">
+					    If Not Exists
+					  </label>
+					
+					</div>
 
 
 			
@@ -237,7 +264,15 @@
 		 		window.myCodeMirror && window.myCodeMirror.save();
 				window.sessionStorage && sessionStorage.setItem("twig", $("textarea").val() ) ;
 		});
-		
+		$("input[name=tagtype]").change(function(){
+			var val = $(this).val();
+			if(val === "conditional"){
+				$(".conditional").show();
+			}
+			if(val === "echo"){
+				
+			}
+		});
 		$("[data-twig]").click(function(){
 			var $this = $(this);
 			$(".modal-title").text($this.text() + " - {{ " + $this.data("twig") + " }}" );
@@ -246,7 +281,8 @@
 		
 			$("#insert-tag").click(function(){
 				var tag = "";
-				if($("input[name=tagtype]:checked").val() === "echo"){
+				var type = $("input[name=tagtype]:checked").val();
+				if( type === "echo"){
 					if($("#default").val()){
 						tag = "{{ " + $this.data("twig") + " | default(\"" + $("#default").val() + "\") }}"
 	
@@ -254,6 +290,28 @@
 					else{
 						tag = "{{ " + $this.data("twig") + " }}"
 					}
+				}
+				else if( type === "conditional"){
+					var conditional_type = $("input[name=conditional-type]:checked").val();
+					var conditional_subtype = $("input[name=conditional-subtype]:checked").val();
+					var basetag = "{% if ";
+					if(conditional_subtype === "ifnot"){
+						basetag += " not ";
+					}
+					basetag += $this.data("twig") ;
+					if($("#default").val()){
+						basetag +=  " | default(\"" + $("#default").val() + "\")";
+					}
+					if(conditional_subtype === "ifequals"){
+						basetag += " == \"\"";
+					}
+					basetag += " %}\n\n";
+					if(conditional_type === "ifelse"){
+						basetag+= "{% else %}\n\n"
+					}
+					basetag += "{% endif %}"
+					
+					tag = basetag;
 				}
 				console.log(tag);
 				myCodeMirror.replaceSelection(tag)
