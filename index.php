@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Beyond Excel: How to analyze your data in SQL</title>
+	<title>Twig Builder (BETA)</title>
 	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 
 	<!-- Optional theme -->
@@ -59,6 +59,7 @@
 
 		<div class="row">
 		  <div class="col-md-8 col-md-offset-2">
+			<h2>Twig Builder (BETA)</h2>
 		&nbsp;			
 		</div>
 		</div>
@@ -172,10 +173,13 @@
 		}
 	};
 	$(function(){
-		$("#show-error").click(function(){
+		$("#show-error").click(function(e){
+			e.preventDefault();
+			e.stopPropagation();
 		if($(this).hasClass("disabled")){ return;}
 		
 		$("#display").html(window.latestError)
+		return false;
 		});
 	});
 	</script>
@@ -263,5 +267,6 @@
 	})
 	</script>
 	<script src="twig.js"></script>
+	<a href="#" id="permalink">Permalink</a>
 </body>
 </html>

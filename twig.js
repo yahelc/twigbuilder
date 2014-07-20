@@ -18,7 +18,7 @@ function success(d) {
 
 var get = (function() {
 	var map = {};
-	window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, k, v) {
+	window.location.href.replace(/[#&]+([^=&]+)=([^&]*)/gi, function(m, k, v) {
 		map[k] = decodeURIComponent(v.replace(/\+/g," "));
 	});
 	return map;
@@ -32,7 +32,7 @@ $(function() {
 	var $template  = $("#twig"),
 		$variables = $("#variables");
 
-	$(document).bind("keyup keypress pageload", function(e) {
+	$(document).bind("keyup keypress pageload click", function(e) {
 		var variables = $("#variables").val() || "{}";
 		var template = $template.val();
 		if (!window.isFirst) {
@@ -59,7 +59,6 @@ $(function() {
 		}
 		$.post("render.php", {
 			'template': template,
-			'variables': variables,
 			'personalized': $("#personalized")[0].checked
 		},
 		function(d) {
@@ -74,7 +73,7 @@ $(function() {
 				sessionStorage.setItem("template", template);
 			}
 			$("#permalink").attr("href", function() {
-				return "/?" + $("#twig-form").serialize();
+				return "/#" + $("input,textarea").serialize();
 			});
 			if ("replaceState" in window.history) {
 				history.replaceState({},
@@ -87,9 +86,13 @@ $(function() {
 		$template.val(template);
 		$variables.val(variables);
 	} else if (supportsSessionStorage) {
-		$template.val(sessionStorage.getItem("template"));
-		$variables.val(sessionStorage.getItem("variables"));
+		
+		myCodeMirror.getDoc().setValue(	sessionStorage.getItem("template") || "");
+ 		window.myCodeMirror && window.myCodeMirror.save();
+		
 	}
-	$("#twig-form").trigger("pageload");
+	$(document).trigger("pageload");
+	$("#twig").keyup();
+	
 
 });
