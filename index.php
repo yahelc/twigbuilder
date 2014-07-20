@@ -216,8 +216,9 @@
 		      <input type="text" class="form-control" id="default" placeholder="i.e. Friend">
 		    </div>
 		  </div>
-
-			<div class="radio conditional" id="conditional-group" style="display:none;">
+<hr><br>
+		<div class="form-group">
+			<div class="radio  conditional" id="conditional-group" style="display:none;">
 			  <label>
 			    <input type="radio" name="conditional-type" id="conditional-type-if" value="if" checked>
 			    If Statement
@@ -227,6 +228,7 @@
 			    If/Else Statement
 			  </label>
 			</div>
+		</div>
 					<div class="radio conditional" id="conditional-type-group" style="display:none;">
 						<h3>Condition Type</h3>
 					  <label>
@@ -270,6 +272,7 @@
 				$(".conditional").show();
 			}
 			if(val === "echo"){
+				$(".conditional").hide();
 				
 			}
 		});
